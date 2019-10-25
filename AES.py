@@ -7,25 +7,61 @@ key="0f1571c947d9e8591cb7add6af7f6798"
 
 #operations
 def SubBytes(block):
-	pass
+	
+
+	return block
 
 
+def shift(row,shift_no):
+
+	temp = ""
+
+	row_lst = list(row)
+
+	#performs circular left shift
+	while shift_no != 0:
+		temp = row_lst[3]
+		row_lst[3] = row_lst[0]
+		row_lst[0] = row_lst[1]
+		row_lst[1] = row_lst[2]
+		row_lst[2] = temp
+		shift_no-=1
+	
+	row = row_lst[0] + row_lst[1] + row_lst[2] + row_lst[3]
+
+	return row
 
 
 def ShiftRows(block):
-	pass
+	
+	row1 = block[0:4]
+	row2 = block[4:8]
+	row3 = block[8:12]
+	row4 = block[12:16]
+	
+	row1 = shift(row1,0)
+	row2 = shift(row2,1)
+	row3 = shift(row3,2)
+	row4 = shift(row4,3)
+	
+	block = row1 + row2 + row3 + row4
 
+	return block
 
 
 
 def MixColumns(block):
-	pass
+	
+
+	return block
 
 
 
 
 def AddRoundKey(block):
-	pass
+	
+
+	return block
 
 
 
@@ -52,10 +88,13 @@ blocks = []
 b_start = 0
 b_end = 15
 temp = ""
+ciphertext = ""
 
 while b_start < len(plaintext)-1:
 	temp = plaintext[b_start:b_end]
 	blocks.append(temp)
+	b_start+=16
+	b_end+=16
 
 
 #encryption
@@ -64,21 +103,22 @@ rounds = 0
 for n in blocks:
 	while rounds < 11:
 		if rounds == 0:
-			AddRoundKey(n)
+			arkr = AddRoundKey(n)
 		elif rounds == 10:
-			SubBytes(n)
-			ShiftRows(n)
-			AddRoundKey(n)
+			sbr = SubBytes(n)
+			srr = ShiftRows(sbr)
+			arkr = AddRoundKey(srr)
 		else:
-			SubBytes(n)
-			ShiftRows(n)
-			MixColumns(n)
-			AddRoundKey(n)
+			print("y")
+			sbr = SubBytes(n)
+			srr = ShiftRows(sbr)
+			mcr = MixColumns(srr)
+			arkr = AddRoundKey(mcr)
 		rounds+=1
 	rounds = 0
+	ciphertext+=arkr
 
-
-
+print(ciphertext)
 
 
 
