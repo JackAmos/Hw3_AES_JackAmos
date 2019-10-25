@@ -3,11 +3,11 @@
 #AES
 #Python 3.7
 
-key="0f1571c947d9e8591cb7add6af7f6798"
-
 #operations
 def SubBytes(block):
 	
+	#untransformed s_box, 16x16
+	s_box = list(range(256))
 
 	return block
 
@@ -52,6 +52,28 @@ def ShiftRows(block):
 
 def MixColumns(block):
 	
+	mix_matrix = [2,3,1,1,1,2,3,1,1,1,2,3,3,1,1,2]
+	block_lst = list(block)
+
+	col1 = []
+	col2 = []
+	col3 = []
+	col4 = []
+	col_count = 4
+	i = 0
+
+	while col_count != 0:
+		col1.append(block_lst[i])
+		col2.append(block_lst[i+1])
+		col3.append(block_lst[i+2])
+		col4.append(block_lst[i+3])
+		i+=4
+		col_count-=1
+
+	#mm x col1(4x1 column)
+	
+
+
 
 	return block
 
@@ -60,6 +82,9 @@ def MixColumns(block):
 
 def AddRoundKey(block):
 	
+	key="0f1571c947d9e8591cb7add6af7f6798"
+
+
 
 	return block
 
@@ -86,7 +111,7 @@ if len(plaintext)%16 != 0:
 #divide plaintext into blocks
 blocks = []
 b_start = 0
-b_end = 15
+b_end = 16
 temp = ""
 ciphertext = ""
 
@@ -109,7 +134,6 @@ for n in blocks:
 			srr = ShiftRows(sbr)
 			arkr = AddRoundKey(srr)
 		else:
-			print("y")
 			sbr = SubBytes(n)
 			srr = ShiftRows(sbr)
 			mcr = MixColumns(srr)
