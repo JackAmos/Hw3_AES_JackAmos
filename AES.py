@@ -3,14 +3,21 @@
 #AES
 #Python 3.7
 
-ki = 0
-kj = 8
 
 #operations
 def SubBytes(block):
 	
 	#untransformed s_box, 16x16
-	s_box = list(range(256))
+	s_box = [[99,124,119,123,242,107,111,197,48,1,103,43,254,215,171,118],
+	[202,130,201,125,250,89,71,240,173,212,162,175,156,164,114,192],
+	[]]
+
+
+
+
+
+
+
 
 	return block
 
@@ -69,6 +76,7 @@ def MixColumns(block):
 	i = 0
 
 	while col_count != 0:
+		
 		col1.append(block[i])
 		col2.append(block[i+1])
 		col3.append(block[i+2])
@@ -84,10 +92,10 @@ def MixColumns(block):
 
 	while row_count != 0:
 		
-		new_matrix.append(col1[i]*hex(mix_matrix[j]))
-		new_matrix.append(col2[i]*hex(mix_matrix[j+1]))
-		new_matrix.append(col3[i]*hex(mix_matrix[j+2]))
-		new_matrix.append(col4[i]*hex(mix_matrix[j+3]))
+		new_matrix.append(col1[i]*(mix_matrix[j]))
+		new_matrix.append(col2[i]*(mix_matrix[j+1]))
+		new_matrix.append(col3[i]*(mix_matrix[j+2]))
+		new_matrix.append(col4[i]*(mix_matrix[j+3]))
 		i+=1
 		j+=4
 		row_count-=1
@@ -105,7 +113,7 @@ def keyExpansion(key):
 	num_key = []
 
 	for n in temp_key:
-		num_key.append(ord(n))
+		num_key.append((ord(n)))
 
 	exp_key_cnt = 52
 	i = 4
@@ -115,12 +123,7 @@ def keyExpansion(key):
 		i+=1
 		exp_key_cnt-=1
 
-	new_key = ""
-
-	for n in num_key:
-		new_key+=char(n)
-
-	return new_key
+	return num_key
 
 
 
@@ -129,7 +132,11 @@ def AddRoundKey(block):
 	
 	key="0f1571c947d9e8591cb7add6af7f6798"
 
+	ki = 0
+	kj = 8
+
 	new_key = keyExpansion(key[ki:kj])
+
 
 	ki+=8
 	kj+=8
@@ -139,8 +146,12 @@ def AddRoundKey(block):
 		kj = 8
 
 
-	
+	key_lst = list(new_key)
 
+	i = 0
+
+	for n in block:
+		block[block.index(n)] = (block[i]^key_lst[i])
 
 
 	return block
@@ -170,20 +181,20 @@ blocks = []
 b_start = 0
 b_end = 16
 temp = []
-hexToAdd = []
+ordToAdd = []
 ciphertext = ""
 
 while b_start < len(plaintext)-1:
 	temp = list(plaintext[b_start:b_end])
 
 	for n in temp:
-		hexToAdd.append(hex(ord(n)))
+		ordToAdd.append(ord(n))
 
-	blocks.append(hexToAdd)
+	blocks.append(ordToAdd)
 	b_start+=16
 	b_end+=16
 
-	
+print(blocks)
 
 #encryption
 rounds = 0
