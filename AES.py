@@ -3,6 +3,9 @@
 #AES
 #Python 3.7
 
+ki = 0
+kj = 8
+
 #operations
 def SubBytes(block):
 	
@@ -44,7 +47,11 @@ def ShiftRows(block):
 	row3 = shift(row3,2)
 	row4 = shift(row4,3)
 	
-	block = row1 + row2 + row3 + row4
+	block = []
+	block.append(row1)
+	block.append(row2)
+	block.append(row3)
+	block.append(row4)
 
 	return block
 
@@ -53,7 +60,6 @@ def ShiftRows(block):
 def MixColumns(block):
 	
 	mix_matrix = [2,3,1,1,1,2,3,1,1,1,2,3,3,1,1,2]
-	block_lst = list(block)
 
 	col1 = []
 	col2 = []
@@ -63,19 +69,58 @@ def MixColumns(block):
 	i = 0
 
 	while col_count != 0:
-		col1.append(block_lst[i])
-		col2.append(block_lst[i+1])
-		col3.append(block_lst[i+2])
-		col4.append(block_lst[i+3])
+		col1.append(block[i])
+		col2.append(block[i+1])
+		col3.append(block[i+2])
+		col4.append(block[i+3])
 		i+=4
 		col_count-=1
 
 	#mm x col1(4x1 column)
-	
+	new_matrix = []
+	row_count = 3
+	i = 0
+	j = 0
+
+	while row_count != 0:
+		
+		new_matrix.append(col1[i]*hex(mix_matrix[j]))
+		new_matrix.append(col2[i]*hex(mix_matrix[j+1]))
+		new_matrix.append(col3[i]*hex(mix_matrix[j+2]))
+		new_matrix.append(col4[i]*hex(mix_matrix[j+3]))
+		i+=1
+		j+=4
+		row_count-=1
+
+	return new_matrix
 
 
 
-	return block
+
+def keyExpansion(key):
+
+
+	temp_key = list(key)
+
+	num_key = []
+
+	for n in temp_key:
+		num_key.append(ord(n))
+
+	exp_key_cnt = 52
+	i = 4
+
+	while exp_key_cnt != 0:
+		num_key.append((num_key[i-1])^(num_key[i-4]))
+		i+=1
+		exp_key_cnt-=1
+
+	new_key = ""
+
+	for n in num_key:
+		new_key+=char(n)
+
+	return new_key
 
 
 
@@ -83,6 +128,18 @@ def MixColumns(block):
 def AddRoundKey(block):
 	
 	key="0f1571c947d9e8591cb7add6af7f6798"
+
+	new_key = keyExpansion(key[ki:kj])
+
+	ki+=8
+	kj+=8
+
+	if kj > 32:
+		ki = 0
+		kj = 8
+
+
+	
 
 
 
@@ -112,15 +169,21 @@ if len(plaintext)%16 != 0:
 blocks = []
 b_start = 0
 b_end = 16
-temp = ""
+temp = []
+hexToAdd = []
 ciphertext = ""
 
 while b_start < len(plaintext)-1:
-	temp = plaintext[b_start:b_end]
-	blocks.append(temp)
+	temp = list(plaintext[b_start:b_end])
+
+	for n in temp:
+		hexToAdd.append(hex(ord(n)))
+
+	blocks.append(hexToAdd)
 	b_start+=16
 	b_end+=16
 
+	
 
 #encryption
 rounds = 0
