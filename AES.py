@@ -182,33 +182,17 @@ def Subword(word):
 def keyExpansion(key):
 
 
-	temp_key = list(key)
-
-
-	hexStr = ""
-	num_key = []
-	k = 0
-
-	for n in temp_key:
-		if k == 2:
-			k = 0
-			num_key.append(int("0x"+hexStr,16))
-			hexStr = ""
-		else:
-			k+=1
-			hexStr+=n
-
 	exp_key_cnt = 52
 	i = 4
 	j = 0
 	l = 0
-	k = 0
+	k = 1
 	Rword = [0x01, 0x00, 0x00, 0x00]
 
 
 	while exp_key_cnt != 0:
-		if j == 4 or j == 0:
-			word = num_key[i:i+4]
+		if j == 0:
+			word = key[i:i+4]
 			rot = Rotword(word,1)
 			sub = Subword(rot)
 
@@ -222,24 +206,32 @@ def keyExpansion(key):
 		elif j ==1:
 
 			for n in sub:
-				num_key.append(num_key[k]^n)
+				key.append(key[k-1]^n)
 				k+=1
-
-			k+=12
-		else:
-			num_key.append((num_key[i-1])^(num_key[i-4]))
 			j+=1
+			k+=11
+		else:
+			key.append((key[i-1])^(key[i-4]))
+			key.append((key[i])^(key[i-3]))
+			key.append((key[i+1])^(key[i-2]))
+			key.append((key[i+2])^(key[i-1]))
+			j+=1
+
+		if j == 4:
+			j = 0
+
 		i+=1
 		exp_key_cnt-=1
 
-	return num_key
+	print(key)
+	return key
 
 
 
 
 def AddRoundKey(block):
 	
-	key="0f1571c947d9e8591cb7add6af7f6798"
+	key = [0x0f,0x15,0x71,0xc9,0x47,0xd9,0xe8,0x59,0x1c,0xb7,0xad,0xd6,0xaf,0x7f,0x67,0x98] 
 
 	key_lst = keyExpansion(key)
 
