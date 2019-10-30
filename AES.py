@@ -241,7 +241,7 @@ for n in blocks:
 
 	#hex back to chars
 	for n in arkr:
-		n = chr(int(n))
+		n = "0x" + str(n)
 		ciphertext+=n
 
 
