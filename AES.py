@@ -26,9 +26,17 @@ def SubBytes(block):
 		 	0xf0:0x8c,0xf1:0xa1,0xf2:0x89,0xf3:0x0d,0xf4:0xbf,0xf5:0xe6,0xf6:0x42,0xf7:0x68,0xf8:0x41,0xf9:0x99,0xfa:0x2d,0xfb:0x0f,0xfc:0xb0,0xfd:0x54,0xfe:0xbb,0xff:0x16}
 
 	for n in s_box:
-		for m in block:
-			if m == n:
-				m = s_box[n]
+		if block[0] == n:
+			block[0] = s_box[n]
+		if block[1] == n:
+			block[1] = s_box[n]
+		if block[2] == n:
+			block[2] = s_box[n]
+		if block[3] == n:
+			block[3] = s_box[n]
+
+	for n in block:
+		print("S_B: "+str(hex(n)))
 
 	return block
 
@@ -89,6 +97,9 @@ def ShiftRows(block):
 	for n in row4:
 		block.append(n)
 
+	for n in block:
+		print("SR: "+str(hex(n)))
+
 	return block
 
 
@@ -130,6 +141,9 @@ def MixColumns(block):
 		j+=4
 		row_count-=1
 
+	for n in new_matrix:
+		print("MC: "+str(hex(n)))
+
 	return new_matrix
 
 
@@ -170,9 +184,14 @@ def Subword(word):
 		 	0xf0:0x8c,0xf1:0xa1,0xf2:0x89,0xf3:0x0d,0xf4:0xbf,0xf5:0xe6,0xf6:0x42,0xf7:0x68,0xf8:0x41,0xf9:0x99,0xfa:0x2d,0xfb:0x0f,0xfc:0xb0,0xfd:0x54,0xfe:0xbb,0xff:0x16}
 
 	for n in s_box:
-		for m in word:
-			if m == n:
-				m = s_box[n]
+		if word[0] == n:
+			word[0] = s_box[n]
+		if word[1] == n:
+			word[1] = s_box[n]
+		if word[2] == n:
+			word[2] = s_box[n]
+		if word[3] == n:
+			word[3] = s_box[n]
 
 	return word
 
@@ -191,7 +210,7 @@ def keyExpansion(key):
 
 
 	while exp_key_cnt != 0:
-		if j == 0:
+		if j == 0 or j == 5:
 			word = key[i:i+4]
 			rot = Rotword(word,1)
 			sub = Subword(rot)
@@ -201,13 +220,14 @@ def keyExpansion(key):
 				l+=1
 			
 			l = 0
-			Rword = Rword * 2
+			Rword[0] = Rword[0] * 2
 			j = 1
 		elif j ==1:
 
 			for n in sub:
 				key.append(key[k-1]^n)
 				k+=1
+
 			j+=1
 			k+=11
 		else:
@@ -217,13 +237,10 @@ def keyExpansion(key):
 			key.append((key[i+2])^(key[i-1]))
 			j+=1
 
-		if j == 4:
-			j = 0
 
 		i+=1
 		exp_key_cnt-=1
 
-	print(key)
 	return key
 
 
@@ -242,6 +259,8 @@ def AddRoundKey(block):
 		block[block.index(n)] = (block[i]^key_lst[i])
 		i+=1
 
+	for n in block:
+		print("ARK: "+str(hex(n)))
 
 	return block
 
@@ -288,6 +307,10 @@ while b_start < len(plaintext)-1:
 rounds = 0
 
 for n in blocks:
+
+	for f in n:
+		print("SoR:"+hex(f))
+
 	while rounds < 11:
 		if rounds == 0:
 			arkr = AddRoundKey(n)
@@ -301,6 +324,8 @@ for n in blocks:
 			mcr = MixColumns(srr)
 			arkr = AddRoundKey(mcr)
 		rounds+=1
+		print("**********************************************")
+
 	rounds = 0
 
 	#hex back to chars
