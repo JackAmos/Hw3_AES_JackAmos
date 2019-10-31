@@ -34,9 +34,31 @@ def SubBytes(block):
 			block[2] = s_box[n]
 		if block[3] == n:
 			block[3] = s_box[n]
+		if block[4] == n:
+			block[4] = s_box[n]
+		if block[5] == n:
+			block[5] = s_box[n]
+		if block[6] == n:
+			block[6] = s_box[n]
+		if block[7] == n:
+			block[7] = s_box[n]
+		if block[8] == n:
+			block[8] = s_box[n]
+		if block[9] == n:
+			block[9] = s_box[n]
+		if block[10] == n:
+			block[10] = s_box[n]
+		if block[11] == n:
+			block[11] = s_box[n]
+		if block[12] == n:
+			block[12] = s_box[n]
+		if block[13] == n:
+			block[13] = s_box[n]
+		if block[14] == n:
+			block[14] = s_box[n]
+		if block[15] == n:
+			block[15] = s_box[n]
 
-	for n in block:
-		print("S_B: "+str(hex(n)))
 
 	return block
 
@@ -97,9 +119,6 @@ def ShiftRows(block):
 	for n in row4:
 		block.append(n)
 
-	for n in block:
-		print("SR: "+str(hex(n)))
-
 	return block
 
 
@@ -127,7 +146,7 @@ def MixColumns(block):
 
 	#mm x col1(4x1 column)
 	new_matrix = []
-	row_count = 3
+	row_count = 4
 	i = 0
 	j = 0
 
@@ -140,9 +159,6 @@ def MixColumns(block):
 		i+=1
 		j+=4
 		row_count-=1
-
-	for n in new_matrix:
-		print("MC: "+str(hex(n)))
 
 	return new_matrix
 
@@ -259,9 +275,6 @@ def AddRoundKey(block):
 		block[block.index(n)] = (block[i]^key_lst[i])
 		i+=1
 
-	for n in block:
-		print("ARK: "+str(hex(n)))
-
 	return block
 
 
@@ -308,9 +321,6 @@ rounds = 0
 
 for n in blocks:
 
-	for f in n:
-		print("SoR:"+hex(f))
-
 	while rounds < 11:
 		if rounds == 0:
 			arkr = AddRoundKey(n)
@@ -324,11 +334,10 @@ for n in blocks:
 			mcr = MixColumns(srr)
 			arkr = AddRoundKey(mcr)
 		rounds+=1
-		print("**********************************************")
 
 	rounds = 0
 
-	#hex back to chars
+	#hex string
 	for n in arkr:
 		n = "0x" + str(n)
 		ciphertext+=n
